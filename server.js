@@ -13,19 +13,28 @@ app.get('/', (req, res) => {
   console.log(`${req.connection.remoteAddress} connected to me and asked for /`)
 
   const todoList = ['Clean dishes', 'Walk the dog', 'Make my lunch', 'Pack my umbrella']
+  const completedList = ['Get ready for lecture', 'Grade homework']
 
   console.log(todoList)
 
   // Sends a *STRING* to the user
   // res.send('Hello world')
 
-  //                         What                 Where
-  //                        mustache               the
-  //                        template              data
-  //                         sees               comes from
-  //                          |                     |
-  //                          v                     v
-  res.render('homepage', { todoListForTheBrowser: todoList })
+  const templateData = {
+    //    What                 Where
+    //   mustache               the
+    //   template              data
+    //    sees               comes from
+    //     |                     |
+    //     v                     v
+    todoListForTheBrowser: todoList,
+    completedListForTheBrowser: completedList
+  }
+
+  //                     The object with our data inside
+  //                         |
+  //                         v
+  res.render('homepage', templateData)
 })
 
 app.listen(3000, () => {
