@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "completed": false,
+    "description": "Clean dishes"
+  },
+  {
+    "id": 2,
+    "completed": false,
+    "description": "Walk the dog"
+  },
+  {
+    "id": 3,
+    "completed": false,
+    "description": "Make my lunch"
+  },
+  {
+    "id": 4,
+    "completed": true,
+    "description": "Pack my umbrella",
+    "when": "2017-07-31T18:21:59.430Z"
+  },
+  {
+    "id": 5,
+    "completed": false,
+    "description": "Commit my code to github"
+  },
+  {
+    "id": 6,
+    "completed": true,
+    "description": "Get ready for lecture",
+    "when": "Tuesday"
+  },
+  {
+    "id": 7,
+    "completed": true,
+    "description": "Grade homework",
+    "when": "Saturday"
+  },
+  {
+    "id": 8,
+    "completed": true,
+    "description": "Fix the Apple TV",
+    "when": "2017-07-31T18:16:59.234Z"
+  }
+]

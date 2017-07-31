@@ -1,6 +1,7 @@
 const express = require('express')
 const mustacheExpress = require('mustache-express')
 const bodyParser = require('body-parser')
+const jsonfile = require('jsonfile')
 
 const app = express()
 
@@ -18,8 +19,7 @@ app.engine('mustache', mustacheExpress())
 app.set('views', './templates')
 app.set('view engine', 'mustache')
 
-const todoList = ['Clean dishes', 'Walk the dog', 'Make my lunch', 'Pack my umbrella', 'Commit my code to github']
-const completedList = ['Get ready for lecture', 'Grade homework']
+const todoList = jsonfile.readFileSync('todos.json')
 
 // When the user asks for `/`, say "Hello world"
 app.get('/', (req, res) => {
@@ -37,8 +37,11 @@ app.get('/', (req, res) => {
     //    sees               comes from
     //     |                     |
     //     v                     v
-    todoListForTheBrowser: todoList,
-    completedListForTheBrowser: completedList
+    uncompleted: todoList.filter(todo => !todo.completed),
+    completed: todoList.filter(todo => todo.completed)
+    // completed:   todoList.filter(function(todo) {
+    //   return todo.completed
+    // })
   }
 
   //                     The object with our data inside
@@ -53,8 +56,13 @@ app.post('/addTodo', (req, res) => {
   const descriptionForNewTodo = req.body.description
 
   // Add it to the list of todos
-  todoList.push(descriptionForNewTodo)
+  todoList.push({ id: todoList.length + 1, completed: false, description: descriptionForNewTodo })
   console.log(todoList)
+
+  // Use the jsonfile module to write a file named `todos.json` with the contents of our array
+  jsonfile.writeFile('todos.json', todoList, { spaces: 2 }, err => {
+    console.log(`todos.json error: ${err}`)
+  })
 
   // Show the user the new list of todos
   // Go back to the / URL. We don't mention templates here
@@ -62,20 +70,20 @@ app.post('/addTodo', (req, res) => {
 })
 
 app.post('/markComplete', (req, res) => {
-  // Get the description
-  const descriptionOfTheTaskWeAreCompleting = req.body.descriptionOfTheTaskWeAreCompleting
+  // Get the id
+  const id = parseInt(req.body.id)
 
-  // Add the description to the completed List
-  completedList.push(descriptionOfTheTaskWeAreCompleting)
+  const todo = todoList.find(todo => todo.id === id)
 
-  // Using indexOf and splice
-  // remove the description from the todo List
-  const indexOfItem = todoList.indexOf(descriptionOfTheTaskWeAreCompleting)
-  // returns -1 if not found, otherwise the index of that item in the array
-  todoList.splice(indexOfItem, 1)
+  if (todo) {
+    todo.completed = true
+    todo.when = new Date()
 
-  // Woot, filter for the win! (Slower, but easier to read/undertand?)
-  // todoList = todoList.filter(description => description !== descriptionOfTheTaskWeAreCompleting)
+    // Use the jsonfile module to write a file named `todos.json` with the contents of our array
+    jsonfile.writeFile('todos.json', todoList, { spaces: 2 }, err => {
+      console.log(`todos.json error: ${err}`)
+    })
+  }
 
   // send the user back to the / page
   res.redirect('/')
