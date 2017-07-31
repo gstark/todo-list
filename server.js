@@ -61,6 +61,26 @@ app.post('/addTodo', (req, res) => {
   res.redirect('/')
 })
 
+app.post('/markComplete', (req, res) => {
+  // Get the description
+  const descriptionOfTheTaskWeAreCompleting = req.body.descriptionOfTheTaskWeAreCompleting
+
+  // Add the description to the completed List
+  completedList.push(descriptionOfTheTaskWeAreCompleting)
+
+  // Using indexOf and splice
+  // remove the description from the todo List
+  const indexOfItem = todoList.indexOf(descriptionOfTheTaskWeAreCompleting)
+  // returns -1 if not found, otherwise the index of that item in the array
+  todoList.splice(indexOfItem, 1)
+
+  // Woot, filter for the win! (Slower, but easier to read/undertand?)
+  // todoList = todoList.filter(description => description !== descriptionOfTheTaskWeAreCompleting)
+
+  // send the user back to the / page
+  res.redirect('/')
+})
+
 app.listen(3000, () => {
   console.log('Wow! Listening on port 3000.')
 })

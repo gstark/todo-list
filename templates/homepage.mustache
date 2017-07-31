@@ -13,8 +13,10 @@
     <ul>
       {{#todoListForTheBrowser}}
         <li>
-          <button type="button">Mark Complete</button>
-          {{.}}
+          <form class="" action="/markComplete" method="post">
+            <button type="submit" name="descriptionOfTheTaskWeAreCompleting" value="{{.}}">Mark Complete</button>
+            {{.}}
+          </form>
         </li>
         <!-- Inside of here we are in a loop, called once for each
         element of the todoListForTheBrowser array -->
