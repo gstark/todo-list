@@ -11,22 +11,14 @@
       <button type="submit">Add todo</button>
     </form>
     <ul>
-      <li>
-        <button type="button">Mark Complete</button>
-        Clean dishes
-      </li>
-      <li>
-        <button type="button">Mark Complete</button>
-        Walk the dog
-      </li>
-      <li>
-        <button type="button">Mark Complete</button>
-        Make my lunch
-      </li>
-      <li>
-        <button type="button">Mark Complete</button>
-        Pack my umbrella
-      </li>
+      {{#todoListForTheBrowser}}
+        <li>
+          <button type="button">Mark Complete</button>
+          {{.}}
+        </li>
+        <!-- Inside of here we are in a loop, called once for each
+        element of the todoListForTheBrowser array -->
+      {{/todoListForTheBrowser}}
     </ul>
     <h1>Completed Tasks</h1>
     <ul>
