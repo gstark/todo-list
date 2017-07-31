@@ -12,7 +12,7 @@ app.set('view engine', 'mustache')
 app.get('/', (req, res) => {
   console.log(`${req.connection.remoteAddress} connected to me and asked for /`)
 
-  const todoList = ['Clean dishes', 'Walk the dog', 'Make my lunch', 'Pack my umbrella']
+  const todoList = ['Clean dishes', 'Walk the dog', 'Make my lunch', 'Pack my umbrella', 'Commit my code to github']
   const completedList = ['Get ready for lecture', 'Grade homework']
 
   console.log(todoList)

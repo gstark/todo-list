@@ -22,8 +22,9 @@
     </ul>
     <h1>Completed Tasks</h1>
     <ul>
-      <li>Get ready for lecture</li>
-      <li>Grade homework</li>
+      {{#completedListForTheBrowser}}
+        <li>{{.}}</li>
+      {{/completedListForTheBrowser}}
     </ul>  
   </body>
 </html>
