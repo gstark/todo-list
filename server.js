@@ -37,6 +37,10 @@ app.get('/', (req, res) => {
   res.render('homepage', templateData)
 })
 
+app.post('/addTodo', (req, res) => {
+  res.send('Saw your form, thanks')
+})
+
 app.listen(3000, () => {
   console.log('Wow! Listening on port 3000.')
 })
