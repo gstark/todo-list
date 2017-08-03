@@ -3,8 +3,14 @@ const mustacheExpress = require('mustache-express')
 const bodyParser = require('body-parser')
 const jsonfile = require('jsonfile')
 const expressSession = require('express-session')
+// require the pgPromise library
+const pgPromise = require('pg-promise')()
 
 const app = express()
+
+// Connect to our database and give us a `database` object
+const database = pgPromise({ database: 'tiy-todos' })
+
 
 // Database structure
 //
@@ -49,33 +55,27 @@ app.set('view engine', 'mustache')
 
 // When the user asks for `/`, say "Hello world"
 app.get('/', (req, res) => {
-  console.log(`${req.connection.remoteAddress} connected to me and asked for /`)
+  // Lets see if we can access the database
+  database.any('SELECT * FROM "todos"').then(rows => {
+    // Sends a *STRING* to the user
+    // res.send('Hello world')
 
-  const todoList = req.session.todoList || []
+    const templateData = {
+      //    What                 Where
+      //   mustache               the
+      //   template              data
+      //    sees               comes from
+      //     |                     |
+      //     v                     v
+      uncompleted: rows.filter(todo => !todo.completed),
+      completed: rows.filter(todo => todo.completed)
+    }
 
-  console.log(todoList)
-
-  // Sends a *STRING* to the user
-  // res.send('Hello world')
-
-  const templateData = {
-    //    What                 Where
-    //   mustache               the
-    //   template              data
-    //    sees               comes from
-    //     |                     |
-    //     v                     v
-    uncompleted: todoList.filter(todo => !todo.completed),
-    completed: todoList.filter(todo => todo.completed)
-    // completed:   todoList.filter(function(todo) {
-    //   return todo.completed
-    // })
-  }
-
-  //                     The object with our data inside
-  //                         |
-  //                         v
-  res.render('homepage', templateData)
+    //                     The object with our data inside
+    //                         |
+    //                         v
+    res.render('homepage', templateData)
+  })
 })
 
 app.post('/addTodo', (req, res) => {
