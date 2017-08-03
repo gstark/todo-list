@@ -79,20 +79,24 @@ app.get('/', (req, res) => {
 })
 
 app.post('/addTodo', (req, res) => {
-  const todoList = req.session.todoList || []
-
   // Algorithm for what to do here:
   // Get the descrption of the new todo item
   const descriptionForNewTodo = req.body.description
 
-  console.log(`The user is ${req.session.userName}`)
+  const newTodo = { completed: false, description: descriptionForNewTodo }
+  
+  database
+    // Ask the database to run a query that returns ONE thing (in this case the ID)
+    // The query is INSERT INTO ......
+    // The second argument is an array that fills in the placeholders $1 and $2
+    //    that avoids the "Little Bobby Tables" SQL Injection problem
+    //    $1 => 'Learn about SQL Injection' => description
+    //    $2 => false => completed
+    // ... and as the INSERT to *RETURN* the newly created `id`
+    .one(`INSERT INTO "todos" (completed, description)
+             VALUES($(completed), $(description)) RETURNING id`,
+             newTodo)
 
-  // Add it to the list of todos
-  todoList.push({ id: todoList.length + 1, completed: false, description: descriptionForNewTodo })
-  console.log(todoList)
-
-  // Place the todolist back in the session
-  req.session.todoList = todoList
 
   // Show the user the new list of todos
   // Go back to the / URL. We don't mention templates here
