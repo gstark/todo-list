@@ -51,6 +51,22 @@ app.engine('mustache', mustacheExpress())
 app.set('views', './templates')
 app.set('view engine', 'mustache')
 
+// Matches /todo/1 and /todo/2 and /todo/3, etc.
+app.get('/todo/:id_in_the_url', (req, res) => {
+  // Pull out the ID from the url
+  const idFromTheParamsWeGotFromTheURL = parseInt(req.params.id_in_the_url)
+
+  // Go find the todo with this ID in the database
+  //database.one('SELECT * FROM "todos" WHERE id = $1', idFromTheParamsWeGotFromTheURL)
+  database.one('SELECT * FROM "todos" WHERE id = $(idForTheDatabase)',
+   { idForTheDatabase: idFromTheParamsWeGotFromTheURL })
+    // Bring back its details!
+    .then(todo => {
+      // Render a template
+      res.render('tododetail', todo)
+    })
+})
+
 // When the user asks for `/`, say "Hello world"
 app.get('/', (req, res) => {
   // Lets see if we can access the database
@@ -94,10 +110,10 @@ app.post('/addTodo', (req, res) => {
     .one(`INSERT INTO "todos" (completed, description)
              VALUES($(completed), $(description)) RETURNING id`,
              newTodo)
-    .then(() => {
+    .then(newTodo => {
       // Show the user the new list of todos
       // Go back to the / URL. We don't mention templates here
-      res.redirect('/')
+      res.redirect(`/todo/${newTodo.id}`)
     })
 })
 
