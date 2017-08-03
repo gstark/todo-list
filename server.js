@@ -1,9 +1,7 @@
 const express = require('express')
 const mustacheExpress = require('mustache-express')
 const bodyParser = require('body-parser')
-const jsonfile = require('jsonfile')
 const expressSession = require('express-session')
-// require the pgPromise library
 const pgPromise = require('pg-promise')()
 
 const app = express()
@@ -96,36 +94,34 @@ app.post('/addTodo', (req, res) => {
     .one(`INSERT INTO "todos" (completed, description)
              VALUES($(completed), $(description)) RETURNING id`,
              newTodo)
-
-
-  // Show the user the new list of todos
-  // Go back to the / URL. We don't mention templates here
-  res.redirect('/')
+    .then(() => {
+      // Show the user the new list of todos
+      // Go back to the / URL. We don't mention templates here
+      res.redirect('/')
+    })
 })
 
 app.post('/markComplete', (req, res) => {
-  //
-  //              The todoList from       Default
-  //               our session object     empty todolist
-  //                   |                   |
-  //                   v                   v
-  const todoList = req.session.todoList || []
-
   // Get the id
   const id = parseInt(req.body.id)
 
-  const todo = todoList.find(todo => todo.id === id)
-
-  if (todo) {
-    todo.completed = true
-    todo.when = new Date()
-
-    // Place the todolist back in the session
-    req.session.todoList = todoList
-  }
-
-  // send the user back to the / page
-  res.redirect('/')
+  // Database, please update a todo, we don't care about the data that comes back
+  database
+    // Change the completed to the FIRST ($1) in the array
+    // Change the when_completed to the SECOND ($2) value in the array
+    // WHERE the ID is the THIRD ($3) value in the array
+    .none(`UPDATE "todos"
+           SET completed = $(completed),
+               when_completed = $(when_completed)
+           WHERE id = $(id)`,
+            // Completed is true
+            // when_completed is the current date and time
+            // the id is 4
+            { id: id, completed: true, when_completed: new Date() })
+    .then(() => {
+      // send the user back to the / page
+      res.redirect('/')
+    })
 })
 
 app.listen(3000, () => {
