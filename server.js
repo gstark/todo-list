@@ -6,6 +6,25 @@ const expressSession = require('express-session')
 
 const app = express()
 
+// Database structure
+//
+// table: "todos"
+// - id           - SERIAL primary key
+// - description  - VARCHAR / TEXT
+// - completed    - BOOLEAN
+// - when         - DATETIME
+//
+
+/*  DATABASE SCHEMA (tiy-todos)
+
+    CREATE TABLE "todos" (
+      "id" SERIAL PRIMARY KEY,
+      "description" VARCHAR(300) NOT NULL,
+      "completed" BOOLEAN NOT NULL,
+      "when_completed" TIMESTAMP
+    );
+*/
+
 app.use(
   expressSession({
     secret: 'keyboard cat',
